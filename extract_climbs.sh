@@ -33,6 +33,6 @@ do
 	    echo "...failed with exit code $?"
         fi
     fi
-done < short_climb_links.csv
+done < data/short_climb_links.csv
 
 echo "Successfully downloaded $success of $total video links."
