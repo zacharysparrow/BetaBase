@@ -1,6 +1,16 @@
 #!/bin/bash
 
-rm videos/*.mp4
+if [ ! -d "logs" ]; then
+  mkdir "logs"
+fi
+if [ ! -d "videos" ]; then
+  mkdir "videos"
+fi
+if ls videos/*.mp4 1> /dev/null 2>&1; then
+  rm videos/*.mp4
+fi
+
+#rm videos/*.mp4
 run_time=$(date +%Y%m%d%H%M%S)
 download_log="download_$run_time.log"
 success=0

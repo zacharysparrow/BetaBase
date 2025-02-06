@@ -1,6 +1,6 @@
 # The BetaBase
 
-The BetaBase consists of the climbs (a.k.a problems), climbing sequence (a.k.a. beta), and associated data for all problems in the Tension Board database (as of Dec. 12 2024).
+The BetaBase consists of the climbs (a.k.a problems), climbing sequence (a.k.a. beta), and associated data for all problems in the Tension Board database (as of Dec. 16 2024).
 
 The stack for constructing the BetaBase:
 - Insta-Down to download videos of the beta for each problem
