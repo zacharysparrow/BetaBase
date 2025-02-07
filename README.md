@@ -29,9 +29,20 @@ train model to predict grade given beta and climb info
                 NN(board) --> beta
                 NN(beta) --> grade
 
+BetaBase will contain only climbs (TB1&2) that have public beta videos, so all we have to do for this is:
+  - Download them
+  - Use a pose estimation model (sapiens seems good if we can afford the comp) to get pose estimates
+  - Process to get climb beta
+  - BetaBase will contain all of the OG TB data for the relevant climbs, plus beta sequence and pose estimates
+
 
 insta downloader:
 https://github.com/x404xx/Insta-Down
+
+sapiens:
+https://github.com/facebookresearch/sapiens/tree/main
+https://learnopencv.com/sapiens-human-vision-models/
+
 
 some ML inspo:
 https://arxiv.org/pdf/2102.01788
@@ -52,6 +63,8 @@ virtualenv env
 env/scripts/activate
 pip install -r requirements.txt
 ```
+
+Do we need the toml?
 
 ## **Legal Disclaimer**
 
