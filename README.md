@@ -1,5 +1,7 @@
 # The BetaBase
 
+conda activate instaEnv
+
 The BetaBase consists of the climbs (a.k.a problems), climbing sequence (a.k.a. beta), and associated data for all problems in the Tension Board database (as of Dec. 16 2024).
 
 The stack for constructing the BetaBase:
@@ -39,8 +41,13 @@ BetaBase will contain only climbs (TB1&2) that have public beta videos, so all w
 insta downloader:
 https://github.com/x404xx/Insta-Down
 
+RTMPose:
+https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose#-model-zoo-
+Sapiens has been a pain to get running, and the larger models are slow. RTMPose is better than the smaller sapiens model, quite fast, and comes pre-packaged
+
 sapiens:
 https://github.com/facebookresearch/sapiens/tree/main
+https://github.com/ibaiGorordo/Sapiens-Pytorch-Inference
 https://learnopencv.com/sapiens-human-vision-models/
 
 
