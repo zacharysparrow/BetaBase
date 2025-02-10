@@ -1,12 +1,12 @@
 # The BetaBase
 
-conda activate instaEnv
+conda activate Env
 
 The BetaBase consists of the climbs (a.k.a problems), climbing sequence (a.k.a. beta), and associated data for all problems in the Tension Board database (as of Dec. 16 2024).
 
 The stack for constructing the BetaBase:
 - Insta-Down to download videos of the beta for each problem
-- xxx for pose estimation in each video
+- MediaPipe for pose estimation in each video
 - xxx to extract the beta
 - SQLite (?) for the final database
 
@@ -33,22 +33,26 @@ train model to predict grade given beta and climb info
 
 BetaBase will contain only climbs (TB1&2) that have public beta videos, so all we have to do for this is:
   - Download them
-  - Use a pose estimation model (sapiens seems good if we can afford the comp) to get pose estimates
+  - Use a pose estimation model (MediaPipe) to get pose estimates
   - Process to get climb beta
   - BetaBase will contain all of the OG TB data for the relevant climbs, plus beta sequence and pose estimates
 
+## Issues
+  - Pose estimation seems unreliable in a lot of these climbs, particularly for the feet because they are often occluded
+	we could use the concept of a box
+	- get the person's bounding box from the video
+	- compare that to the bounding box of the used holds in a given position
+	- the box should be similar in size and location if that position is used
+	- person's bounding box also tells us what holds could be used in that frame
+	- rapid changes in box indicate a move
+	- maybe use similar concept using center of mass
 
+## Codes
 insta downloader:
 https://github.com/x404xx/Insta-Down
 
-RTMPose:
-https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose#-model-zoo-
-Sapiens has been a pain to get running, and the larger models are slow. RTMPose is better than the smaller sapiens model, quite fast, and comes pre-packaged
-
-sapiens:
-https://github.com/facebookresearch/sapiens/tree/main
-https://github.com/ibaiGorordo/Sapiens-Pytorch-Inference
-https://learnopencv.com/sapiens-human-vision-models/
+mediapipe:
+https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/pose.md
 
 
 some ML inspo:
@@ -71,6 +75,7 @@ env/scripts/activate
 pip install -r requirements.txt
 ```
 
+also need mediapipe and opencv-python
 Do we need the toml?
 
 ## **Legal Disclaimer**
