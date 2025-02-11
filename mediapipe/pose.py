@@ -15,7 +15,7 @@ def write_landmarks_to_csv(landmarks, frame_number, csv_data):
         csv_data.append([frame_number, mp_pose.PoseLandmark(idx).name, landmark.x, landmark.y, landmark.z, landmark.visibility])
 #    print("\n")
 
-csv_data = []
+csv_data = [["frame", "landmark", "x", "y", "z", "visibility"]]
 frame_number = 0
 cap = cv2.VideoCapture('demo4.mp4')
 
