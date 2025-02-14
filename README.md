@@ -18,6 +18,7 @@ If you would like to install the whole stack to construct a database for yoursel
 ## TODO
 figure out how to handle posts with multiple links
         - can download and process both, then assign uuid to the climb with the best matching holds
+	- explicitly find still points in addition to movements
 figure out how to track limbs
 figure out how to id holds given limb data
 figure out how to reorient id'd holds to face-on
