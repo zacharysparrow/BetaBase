@@ -9,8 +9,9 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import cv2
 
+video_path = "demo2.mp4"
 peak_width = 10
-hold_dist_thresh = 0.01
+hold_dist_thresh = 0.02
 
 df = pd.read_csv('pose_output.csv', dtype={'frame':int, 'landmark':str, 'x':float, 'y':float, 'z':float, 'visibility':float})
 right_hand_data = df[df['landmark'].str.contains('RIGHT_INDEX')]
@@ -33,62 +34,61 @@ def calculate_velocity(coordinates, time_interval):
     velocities.append(np.linalg.norm((vx, vy)))
   return velocities
 
-def find_body_positions(peak_coordinates, points, peak_width):
+def find_body_positions(data, threshold, time_interval, peak_width):
+    velocities = calculate_velocity(data[["x","y"]], time_interval)
+#    move_idx = signal.find_peaks(velocities, height=threshold, prominence=threshold, distance=peak_width)[0]
+#    if np.sign(np.diff(velocities))[0] < 0:
+#        move_idx = np.insert(move_idx, 0, 0)
+#    if np.sign(np.diff(velocities))[-1] > 0:
+#        move_idx = np.append(move_idx, len(data))
+    flat_ranges = []
+    flat_start = 0
+    for i in range(len(velocities)-1):
+        curr_vel = velocities[i]
+        next_vel = velocities[i+1]
+        if curr_vel > threshold and next_vel < threshold:
+            flat_start = i + 1
+        if curr_vel < threshold and next_vel > threshold:
+            flat_end = i
+            if flat_end >= flat_start + 1:
+                flat_ranges.append([flat_start, flat_end])
+            flat_start = flat_end + 1
+
     body_pos = []
-    for i in range(len(peak_coordinates) - 1):
-        left_end = peak_coordinates[i] + peak_width
-        right_end = peak_coordinates[i+1] - peak_width
-        if left_end > right_end:
-            left_end = round(np.mean([left_end, right_end])) - 1
-            right_end = left_end + 2
-        mean_pos = round(np.mean([left_end, right_end]))
-        body_pos.append([mean_pos, np.mean(points[left_end:right_end], axis=0)])
-    return body_pos
+    for r in flat_ranges:
+        body_pos.append([round(np.mean(r)) ,np.nanmean(data[["x","y"]][r[0]:r[1]], axis=0)])
+    return([velocities, body_pos])
 
 def remove_similar_points(points, threshold):
     filtered_points = []
     for point1 in points:
         similar_points = [point1]
         for point2 in points:
-            if not point1.equals(point2) and np.linalg.norm(point1 - point2) < threshold:
+            if not np.all(point1 == point2) and np.linalg.norm(point1 - point2) < threshold:
                 similar_points.append(point2)
-                print("found dupe")
         avg_point = np.mean(similar_points, axis=0)
         filtered_points.append(avg_point)
     return np.unique(np.array(filtered_points, ndmin=2), axis=0)
 
 time_interval = 3 #frames/2
-right_hand_velocities = calculate_velocity(right_hand_data[["x","y"]], time_interval)
-left_hand_velocities = calculate_velocity(left_hand_data[["x","y"]], time_interval)
 
-right_hand_move_idx = signal.find_peaks(right_hand_velocities, height=0.004, prominence=0.004, distance=peak_width)[0]
-if np.sign(np.diff(right_hand_velocities))[0] < 0:
-    right_hand_move_idx = np.insert(right_hand_move_idx, 0, 0)
-if np.sign(np.diff(right_hand_velocities))[-1] > 0:
-    right_hand_move_idx = np.append(right_hand_move_idx, len(right_hand_data))
-
-right_hand_still_data = find_body_positions(right_hand_move_idx, right_hand_data[["x","y"]], peak_width)
+right_hand_velocities, right_hand_still_data = find_body_positions(right_hand_data, 0.004, time_interval, peak_width) 
+print(right_hand_still_data)
 right_hand_still_idx = [i[0] for i in right_hand_still_data]
 right_hand_still_pos = [i[1] for i in right_hand_still_data]
 right_hand_still_pos = remove_similar_points(right_hand_still_pos, hold_dist_thresh)
 right_hand_still_frames = [right_hand_data.frame.iloc[i] for i in right_hand_still_idx]
 right_hand_still_vel = [right_hand_velocities[i] for i in right_hand_still_idx]
 
-left_hand_move_idx = signal.find_peaks(left_hand_velocities, height=0.004, prominence=0.004, distance=peak_width)[0]
-if np.sign(np.diff(left_hand_velocities))[0] < 0:
-    left_hand_move_idx = np.insert(left_hand_move_idx, 0, 0)
-if np.sign(np.diff(left_hand_velocities))[-1] > 0:
-    left_hand_move_idx = np.append(left_hand_move_idx, len(left_hand_data))
-
-left_hand_still_data = find_body_positions(left_hand_move_idx, left_hand_data[["x","y"]], peak_width)
+left_hand_velocities, left_hand_still_data = find_body_positions(left_hand_data, 0.004, time_interval, peak_width) 
 left_hand_still_idx = [i[0] for i in left_hand_still_data]
 left_hand_still_pos = [i[1] for i in left_hand_still_data]
 left_hand_still_pos = remove_similar_points(left_hand_still_pos, hold_dist_thresh)
 left_hand_still_frames = [left_hand_data.frame.iloc[i] for i in left_hand_still_idx]
 left_hand_still_vel = [left_hand_velocities[i] for i in left_hand_still_idx]
 
-right_foot_velocities = calculate_velocity(right_foot_data[["x","y"]], time_interval)
-left_foot_velocities = calculate_velocity(left_foot_data[["x","y"]], time_interval)
+#right_foot_velocities = calculate_velocity(right_foot_data[["x","y"]], time_interval)
+#left_foot_velocities = calculate_velocity(left_foot_data[["x","y"]], time_interval)
 
 print("Right hand holds:")
 print(right_hand_still_pos)
@@ -112,7 +112,7 @@ plt.ylabel("Velocity")
 plt.legend()
 plt.show()
 
-cap = cv2.VideoCapture("demo4.mp4")
+cap = cv2.VideoCapture(video_path)
 
 success, frame = cap.read()
 height, width, layers = frame.shape

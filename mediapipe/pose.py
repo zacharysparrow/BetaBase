@@ -17,7 +17,7 @@ def write_landmarks_to_csv(landmarks, frame_number, csv_data):
 
 csv_data = [["frame", "landmark", "x", "y", "z", "visibility"]]
 frame_number = 0
-cap = cv2.VideoCapture('demo4.mp4')
+cap = cv2.VideoCapture('demo2.mp4')
 
 success, frame = cap.read()
 height, width, layers = frame.shape
