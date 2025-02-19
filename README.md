@@ -20,8 +20,9 @@ figure out how to handle posts with multiple links
         - can download and process both, then assign uuid to the climb with the best matching holds
 	- explicitly find still points in addition to movements
 figure out how to track limbs
+	- still some problems with robustness/hidden limbs
 figure out how to id holds given limb data
-figure out how to reorient id'd holds to face-on
+	- need to figure out how TB holds would appear at different camera orientations, then find the one that matches best?
 figure out how to matched id holds with holds from that climb
 figure out best way to make that into sequence data
 train model to predict beta given climb info
